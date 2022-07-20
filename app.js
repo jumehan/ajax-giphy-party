@@ -15,36 +15,52 @@ const GIF_API_URL = "https://api.giphy.com/v1/gifs/search";
 const api_key = "MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym";
 const $displayGif = $(".displayGifs");
 
-/** Inserts an image into the DOM */
+/** Appends the image URL to the DOM
+ *
+ * @param {string} gifURL
+ */
+
 function displayGif(gifURL) {
   $displayGif.append($('<img>', { src: gifURL }));
 }
 
-/** Gets a url for a gif */
+/** Finds a gif URL based on query
+ *
+ * @param {string} query
+ * @returns: a promise for a gif URL
+ */
+
 async function searchGif(query) {
   console.log("You're seaching for", query);
-  let giffyObj = await getGif(query);
-  let gifURL = giffyObj.data.data[0].images.original.url;
+  const giphyRes = await getGif(query);
+  const gifURL = giphyRes.data.data[0].images.original.url;
 
   return gifURL;
 }
 
-/** searches Giphy API for user input query */
+/** Searches Giphy gifs based on a search term
+ *
+ * @param {string} searchTerm
+ * @returns a promise of a Giphy API dataset
+ */
+
 async function getGif(searchTerm) {
-  let gifImg = await axios.get(GIF_API_URL, { params: { q: searchTerm, api_key } });
+  const gifImg = await axios.get(GIF_API_URL, { params: { q: searchTerm, api_key } });
   console.log("get", gifImg);
 
   return gifImg;
 }
 
-/** Controller function; takes input and clears input area */
+/** Controller function;
+ *  Takes user input and clears input area
+ */
 async function findAndDisplayGif(event) {
   event.preventDefault();
 
   const $query = $("input").val();
   $("input").val("");
 
-  let gifURL = await searchGif($query);
+  const gifURL = await searchGif($query);
   displayGif(gifURL);
 }
 
@@ -55,3 +71,4 @@ function removeGifs() {
 
 $("form").on("submit", findAndDisplayGif);
 $("#removeImg").on("click", removeGifs);
+//TODO: docstring add parameters, const for non reassigned variables

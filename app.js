@@ -13,17 +13,35 @@
 
 const GIF_API_URL = "https://api.giphy.com/v1/gifs/search";
 const api_key = "MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym";
+const $displayGif = $(".displayGifs");
 
-const $searchQ = $("input");
 
-function getInput() {
-
+function displayGif(gifURL) {
+  $displayGif.append($('<img>', { src: gifURL }));
 }
 
-async function getGif() {
-  let gifImg = await axios.get(GIF_API_URL, {params: {q:"dad", api_key}});
-  console.log("get", gifImg)
+async function searchGif(query) {
+  console.log("You're seaching for", query);
+  let giffyObj = await getGif(query);
+  let gifURL = giffyObj.data.data[0].images.original.url;
+
+  return gifURL;
 }
 
-console.log("Let's get this party started!");
+async function getGif(searchTerm) {
+  let gifImg = await axios.get(GIF_API_URL, { params: { q: searchTerm, api_key } });
+  console.log("get", gifImg);
 
+  return gifImg;
+}
+
+async function findAndDisplayGif(event) {
+  event.preventDefault();
+  const $query = $("input").val();
+
+
+  let gifURL = await searchGif($query);
+  displayGif(gifURL);
+}
+
+$("form").on("submit", findAndDisplayGif);
